@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -19,50 +21,55 @@ import com.knf.dev.librarymanagementsystem.repository.UserRepository;
 import com.knf.dev.librarymanagementsystem.service.BookService;
 
 @SpringBootApplication
-public class Application {
+public class Application extends SpringBootServletInitializer {
 
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-	@Autowired
-	private BookService bookService;
+    @Autowired
+    private BookService bookService;
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
 
-	@Bean
-	public CommandLineRunner initialCreate() {
-		return (args) -> {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-			var book = new Book("AP1287", "Spring in Action ", "CXEF12389", "Book description", Book.BookStatus.VALIDATED);
-			book.addAuthors(new Author("Matt", "dummy description"));
-			book.addCategories(new Category("Dummy categary"));
-			book.addPublishers(new Publisher("Dummy publisher"));
-			bookService.createBook(book);
+    @Bean
+    public CommandLineRunner initialCreate() {
+        return (args) -> {
 
-			var book1 = new Book("BP567#R", "Spring Microservices", "KCXEF12389", "Description1", Book.BookStatus.PENDING);
-			book1.addAuthors(new Author("Maxwell", "Test description1"));
-			book1.addCategories(new Category("New category"));
-			book1.addPublishers(new Publisher("publisher2"));
-			bookService.createBook(book1);
+            var book = new Book("AP1287", "Spring in Action ", "CXEF12389", "Book description", Book.BookStatus.VALIDATED);
+            book.addAuthors(new Author("Matt", "dummy description"));
+            book.addCategories(new Category("Dummy categary"));
+            book.addPublishers(new Publisher("Dummy publisher"));
+            bookService.createBook(book);
 
-			var book2 = new Book("GH67F#", "Spring Boot", "UV#JH", "description2", Book.BookStatus.COMPLETED);
-			book2.addAuthors(new Author("Josh Lang", "Test description2"));
-			book2.addCategories(new Category("Spring category"));
-			book2.addPublishers(new Publisher("publisher3"));
-			bookService.createBook(book2);
+            var book1 = new Book("BP567#R", "Spring Microservices", "KCXEF12389", "Description1", Book.BookStatus.PENDING);
+            book1.addAuthors(new Author("Maxwell", "Test description1"));
+            book1.addCategories(new Category("New category"));
+            book1.addPublishers(new Publisher("publisher2"));
+            bookService.createBook(book1);
 
-			var user = new User("admin", "admin", "admin@admin.in", passwordEncoder.encode("Gema123"),
-					Arrays.asList(new Role("ROLE_ADMIN")));
-			var user1 = new User("hassan", "kamli", "etudiant@gema.edu", passwordEncoder.encode("Gema123"),
-					Arrays.asList(new Role("ROLE_USER")));
-			userRepository.save(user);
-			userRepository.save(user1);
+            var book2 = new Book("GH67F#", "Spring Boot", "UV#JH", "description2", Book.BookStatus.COMPLETED);
+            book2.addAuthors(new Author("Josh Lang", "Test description2"));
+            book2.addCategories(new Category("Spring category"));
+            book2.addPublishers(new Publisher("publisher3"));
+            bookService.createBook(book2);
 
-		};
-	}
+            var user = new User("admin", "admin", "admin@admin.in", passwordEncoder.encode("Gema123"),
+                    Arrays.asList(new Role("ROLE_ADMIN")));
+            var user1 = new User("hassan", "kamli", "etudiant@gema.edu", passwordEncoder.encode("Gema123"),
+                    Arrays.asList(new Role("ROLE_USER")));
+            userRepository.save(user);
+            userRepository.save(user1);
+
+        };
+    }
 }
