@@ -2,7 +2,7 @@
 FROM maven:3.9.9-amazoncorretto-8-debian-bookworm AS build
 WORKDIR /app
 COPY . .
-RUN maven clean install
+RUN mvn clean install
 #Stage 2 running the application 
 FROM eclipse-temurin:8u452-b09-jre-ubi9-minimal
 WORKDIR /app
